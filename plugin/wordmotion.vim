@@ -1,13 +1,13 @@
 if exists('g:loaded_wordmotion')
 	finish
 endif
-let g:loaded_wordmotion = v:true
+let g:loaded_wordmotion = 1
 
 let s:prefix = get(g:, 'wordmotion_prefix', '')
 let s:mappings = get(g:, 'wordmotion_mappings', { })
 let s:spaces = get(g:, 'wordmotion_spaces', '_')
 let s:uspaces = get(g:, 'wordmotion_uppercase_spaces', '')
-let s:disable_default = get(g:, 'wordmotion_disable_default_mappings', v:false)
+let s:disable_default = get(g:, 'wordmotion_disable_default_mappings', 0)
 
 let s:plug = '<Plug>WordMotion_'
 let s:flags = { 'w' : '', 'e' : 'e', 'b' : 'b', 'ge' : 'be' }
@@ -51,7 +51,7 @@ for s:motion in [ 'w', 'e', 'b', 'ge', 'W', 'E', 'B', 'gE' ] " {{{
 	endfor
 endfor " }}}
 
-let s:inner = { 'aw' : v:false, 'iw' : v:true }
+let s:inner = { 'aw' : 0, 'iw' : 1 }
 
 for s:motion in [ 'aw', 'iw', 'aW', 'iW' ] " {{{
 	for s:mode in [ 'x', 'o' ]
@@ -182,9 +182,9 @@ endfunction " }}}
 function! <SID>AOrInnerWordMotion(count, mode, inner, uppercase) abort " {{{
 	let l:flags = 'e'
 	let l:extra = []
-	let l:backwards = v:false
+	let l:backwards = 0
 	let l:count = a:count
-	let l:existing_selection = v:false
+	let l:existing_selection = 0
 	let l:s = a:uppercase ? s:us : s:s
 	let l:S = a:uppercase ? s:uS : s:S
 
@@ -194,11 +194,11 @@ function! <SID>AOrInnerWordMotion(count, mode, inner, uppercase) abort " {{{
 			" no existing selection, exit visual mode
 			execute 'normal!' visualmode()
 		else
-			let l:existing_selection = v:true
+			let l:existing_selection = 1
 			let l:start = getpos('.')
 			if l:start == getpos("'<")
 				let l:flags = 'b'
-				let l:backwards = v:true
+				let l:backwards = 1
 			endif
 		endif
 	endif
@@ -209,7 +209,7 @@ function! <SID>AOrInnerWordMotion(count, mode, inner, uppercase) abort " {{{
 	else
 		if getline('.')[col('.') - 1] =~ l:s
 			if !l:existing_selection
-				let l:backwards = v:true
+				let l:backwards = 1
 			endif
 			call search('\m' . l:S, 'W')
 		endif
@@ -228,7 +228,7 @@ function! <SID>AOrInnerWordMotion(count, mode, inner, uppercase) abort " {{{
 	if !a:inner
 		if col('.') == col('$') - 1
 			" at end of line, go back, and consume preceding white spaces
-			let l:backwards = v:true
+			let l:backwards = 1
 		endif
 
 		if l:backwards && !l:existing_selection
